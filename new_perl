@@ -1,0 +1,82 @@
+#!/bin/bash
+#a bash script to create a template perl script
+#11 October 2014 - Adam D Scott
+
+usage="new_perl <new perl script> #number of inputs#"
+
+#author of perl script
+name="Adam D Scott"
+
+if [ $# -gt 0 ]; then
+#"shebang" for perl
+	echo "#!/usr/bin/perl" > $1
+#file creation & authorship
+	echo -n "#" >> $1
+	timestamp=$(date "+%d %B %Y")
+	echo -n "$timestamp" >> $1
+	echo " - $name - " >> $1
+	echo "" >> $1
+#package use
+	echo "use strict;" >> $1
+	echo "use warnings;" >> $1
+	echo "" >> $1
+	echo "use IO::File;" >> $1
+	echo "use FileHandle;" >> $1
+	echo "" >> $1
+#perl script usage
+	echo -n "my \$usage = 'perl $1 " >> $1
+	if [ $2 > 0 ]; then
+		i=0
+		while [ $i -lt $2 ]; do
+			echo -n "<input$((i+1))> " >> $1
+			i=$((i+1))
+		done
+		echo "" >> $1
+	fi
+	echo "';" >> $1
+	echo "" >> $1
+#argument check
+	if [ $2 -lt 1 ]; then
+		argc=0
+	else
+		argc=$2
+	fi
+	echo "die \$usage , unless @ARGV == $argc;" >> $1
+#if arguments in
+	if [ $2 -gt 0 ]; then
+		echo -n "my ( " >> $1
+		i=0
+		while [ $i -lt $2 ]; do
+			if [ $i == $(($2-1)) ]; then
+				echo -n "\$input$((i+1)) " >> $1
+			else
+				echo -n "\$input$((i+1)) , " >> $1
+			fi
+			i=$((i+1))
+		done
+		echo ") = @ARGV;" >> $1
+		echo "" >> $1
+#assume first input is a file to read
+		echo "my $IN1 = FileHandle->new( \"\$input1\" , \"r\" );" >> $1
+		echo "if ( undefined \$IN1 ) { die \"ADSERROR: Could not open/read \$input1\\n\"; }" >> $1
+		if [ $2 -gt 0 ]; then
+			echo "" >> $1
+			echo "my $OUT = FileHandle->new( \"\$input2\" , \"w\" );" >> $1
+			echo "if ( undefined \$IN2 ) { die \"ADSERROR: Could not open/write \$input2\\n\"; }" >> $1
+		fi
+		echo "" >> $1
+		#echo "open ( IN1 , \"<\$input1\" ) or die \"Cannot open \$input1: \$!\";" >> $1
+		echo "while ( my \$line = <IN1> ) {" >> $1
+		echo "	chomp( \$line );" >> $1
+		echo "	my @line = split( \"\\t\" , \$line );" >> $1
+		echo "" >> $1
+		echo "}" >> $1
+		#echo "close IN1;" >> $1
+		echo "\$IN1->close();" >> $1
+		if [ $2 -gt 0 ]; then
+			echo "\$IN2->close();" >> $1
+		fi
+	fi
+else
+	echo $usage
+fi

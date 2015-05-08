@@ -1,0 +1,11 @@
+#!/bin/bash
+
+perl ~/bin/numhead.pl $1
+#i=1
+#header=`head -n1 $1`
+##echo "$header"
+#read -a line <<< $header
+#for j in "${line[@]}"; do
+#	echo -e $i\\t$j
+#	i=$((i+1))
+#done

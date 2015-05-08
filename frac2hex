@@ -1,0 +1,6 @@
+#!/bin/bash
+
+conv=`frac2hex2 $@`
+echo $conv
+converted=`dec2hex $conv`
+echo $converted

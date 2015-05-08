@@ -1,0 +1,63 @@
+#!/bin/bash
+#a bash script to create a template C++ source
+#11 October 2014 - Adam D Scott
+
+usage="new_cpp <new C++ source>"
+
+#author of C++ source
+name="Adam D Scott"
+timestamp=$(date "+%d %B %Y")
+
+if [ $# -gt 0 ]; then
+#file creation & authorship
+	echo "//$1" > $1
+	echo "//$timestamp - $name - " >> $1
+	echo " " >> $1
+#common includes for C++
+	echo "#include <iostream> //cin, cout, cerr, clog" >> $1
+	echo "#include <cstdio> //read\\write formatted output" >> $1
+	echo "#include <fstream> //ifstream, ofstream, fstream" >> $1
+	echo "#include <cstdlib> //rand, string conversion" >> $1
+	echo "#include <sstream> //stringstream" >> $1
+	echo "#include <string> //string, C++11: stoi, stod, to_string" >> $1
+	echo "#include <vector> //vector, " >> $1
+	echo "#include <map> //map, multimap" >> $1
+	echo "#include <cmath> //trig, hyperbolics, exp, log" >> $1
+	echo " " >> $1
+#main
+	echo "int main( int argc , char** argv )" >> $1
+	echo "{" >> $1
+	if [ $2 -gt 0 ]; then
+#initialize input & output files
+		echo "	std::string in_filename = argv[1];" >> $1
+		echo "	std::string out_filename = argv[2];" >> $1
+		echo " " >> $1
+		echo "	std::ifstream input( in_filename.c_str() );" >> $1
+		echo "	std::ofstream output( out_filename.c_str() );" >> $1
+		echo " " >> $1
+#initialize variables to read in
+		i=0
+		while [ $i -lt $2 ]; do
+			i=$((i+1))
+			echo "	std::string var$i; " >> $1
+		done
+		echo " " >> $1
+#while reading in variables
+		echo -n "	while( input " >> $1
+		i=0
+		while [ $i -lt $2 ]; do
+			i=$((i+1))
+			echo -n ">> var$i " >> $1
+		done
+		echo ")" >> $1
+		echo "	{" >> $1
+		echo "	" >> $1
+		echo "	" >> $1
+		echo "	}" >> $1
+	fi
+	echo "	" >> $1
+	echo "	return 0;" >> $1
+	echo "}" >> $1
+else
+	echo $usage
+fi

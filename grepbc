@@ -1,0 +1,22 @@
+#!/bin/bash
+
+if [ $# -gt 0 ]; then
+	if [ -e $1 ]; then
+		perl ~/bin/greplistbycolumn.pl $2 $1 $3 $4
+	else
+		perl ~/bin/grepbycolumn.pl $2 $1 $3 $4
+	fi
+else
+	echo ""
+	echo -e "Usage:\tgrepbc term<s> <file> #column# #match#"
+	echo ""
+	echo -e "\tterm<s>\t\t-can be a single string search term or a file of search terms (hence <s>), each row with a single term"
+	echo -e "\t<file>\t\t-tsv format type file to search"
+	echo -e "\t#column#\t-column in <file> to check term<s>"
+	echo -e "\t#match#\t\t-is either 0=mismatch, 1=partial match, 2=exact match"
+	echo ""
+	echo -e "What it does:\tgrepbc works like grep, but focuses on a specific column to check"
+	echo ""
+	echo -e "Dependencies:\tgrepbycolumn.pl & greplistbycolumn.pl"
+	echo ""
+fi
