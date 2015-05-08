@@ -57,16 +57,16 @@ if [ $# -gt 0 ]; then
 		echo ") = @ARGV;" >> $1
 		echo "" >> $1
 #assume first input is a file to read
-		echo "my $IN1 = FileHandle->new( \"\$input1\" , \"r\" );" >> $1
+		echo "my \$IN1 = FileHandle->new( \"\$input1\" , \"r\" );" >> $1
 		echo "if ( undefined \$IN1 ) { die \"ADSERROR: Could not open/read \$input1\\n\"; }" >> $1
 		if [ $2 -gt 0 ]; then
 			echo "" >> $1
-			echo "my $OUT = FileHandle->new( \"\$input2\" , \"w\" );" >> $1
+			echo "my \$OUT = FileHandle->new( \"\$input2\" , \"w\" );" >> $1
 			echo "if ( undefined \$IN2 ) { die \"ADSERROR: Could not open/write \$input2\\n\"; }" >> $1
 		fi
 		echo "" >> $1
 		#echo "open ( IN1 , \"<\$input1\" ) or die \"Cannot open \$input1: \$!\";" >> $1
-		echo "while ( my \$line = <IN1> ) {" >> $1
+		echo "while ( my \$line = <\$IN1> ) {" >> $1
 		echo "	chomp( \$line );" >> $1
 		echo "	my @line = split( \"\\t\" , \$line );" >> $1
 		echo "" >> $1
