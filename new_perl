@@ -67,10 +67,22 @@ if [ $# -gt 0 ]; then
 		fi
 		echo "" >> $file
 		#echo "open ( IN1 , \"<\$input1\" ) or die \"Cannot open \$input1: \$!\";" >> $file
+		echo "my @cols;" >> $file
 		echo "while ( my \$line = <\$IN1> ) {" >> $file
 		echo "	chomp( \$line );" >> $file
 		echo "	my @line = split( \"\\t\" , \$line );" >> $file
+		echo "	if ( \$line =~ /asdf/ ) {" >> $file
+		echo "		my \$i = 0;" >> $file
+		echo "		my %cols = map{ ( \$_ , \$i++ ) } @line;" >> $file
+		echo "		unless(	defined( \$cols{\"a\"} )" >> $file
+		echo "			and defined( \$cols{\"b\"} ) ) {" >> $file
+		echo "			die \"Not a valid input1 file!\\n\";" >> $file
+		echo "		}" >> $file
+		echo "		@cols = (	\$cols{\"a\"} ," >> $file
+		echo "					\$cols{\"b\"} );" >> $file
+		echo "	} else {" >> $file
 		echo "" >> $file
+		echo "	}" >> $file
 		echo "}" >> $file
 		#echo "close IN1;" >> $file
 		echo "\$IN1->close();" >> $file
