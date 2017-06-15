@@ -39,7 +39,7 @@ if [ $# -gt 0 ]; then
 	echo "		sys.exit(\"input argument(s) missing\")" >> $1
 	echo "" >> $1
 	#assume first input is a file to read
-	echo "	input = None"
+	echo "	input = None" >> $1
 	echo "" >> $1
 	echo "	try:" >> $1
 	echo -e "		opts, args = getopt.getopt(sys.argv[1:], 'i:h') #:after option meaning required arguments" >> $1
