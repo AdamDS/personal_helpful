@@ -1,0 +1,81 @@
+#!/bin/bash
+#a bash script to create a template python script
+#20170615 Adam D Scott
+
+usage="new_py <new python script> #number of inputs#"
+
+#author of perl script
+name="Adam D Scott"
+
+nArgs=`math $2 x 2`
+
+if [ $# -gt 0 ]; then
+#"shebang" for perl
+	echo "#!/bin/python" > $1
+#file creation & authorship
+	echo -n "#" >> $1
+	timestamp=$(date "+%d %B %Y")
+	echo -n "$timestamp" >> $1
+	echo " - $name - " >> $1
+	echo "" >> $1
+	echo "import sys" >> $1
+	echo "import getopt" >> $1
+	echo "" >> $1
+	#package use
+	echo "def usage():" >> $1
+	echo -e "	print \"\"\"" >> $1
+	echo "	$1 : why do I exist?" >> $1
+	echo "" >> $1
+	echo "	USAGE: $1 [-h] <filename>" >> $1
+	echo -e "		-h    print this message" >> $1
+	echo -e "		<filename>    input file" >> $1
+	echo -e "	\"\"\"" >> $1
+	echo "" >> $1
+	# get arguments
+	echo "#use getopt to get inputs" >> $1
+	echo "def getArguments():" >> $1
+	echo "	if len(args) < ${nArgs}:" >> $1
+	echo "		usage();" >> $1
+	echo "		sys.exit(\"input argument(s) missing\")" >> $1
+	echo "" >> $1
+	#assume first input is a file to read
+	echo "	input = None"
+	echo "" >> $1
+	echo "	try:" >> $1
+	echo -e "		opts, args = getopt.getopt(sys.argv[1:], 'i:h') #:after option meaning required arguments" >> $1
+	echo "	except getopt.GetoptError:" >> $1
+	echo -e "		print \"$1 <inputFile>\"" >> $1
+	#echo "optDic = {} # dictionary to store input options" >> $1
+	echo "" >> $1
+	echo "	for opt, arg in opts: #store the input options" >> $1
+	#echo -e "\toptDic[opt] = arg " >> $1
+	echo "		if opt == '-h': # h means user needs help" >> $1
+	echo "			usage();" >> $1
+	echo "			sys.exit()" >> $1
+	echo "		if opt == '-i':" >> $1
+	echo "			input = arg" >> $1
+	echo "" >> $1
+	echo "	return { 'input' : input }" >> $1
+	echo "" >> $1
+	echo "def readFile( inputFile ):" >> $1
+	echo "	try:" >> $1
+	echo "		f = open( inputFile , \"r\" )" >> $1
+	echo "	except IOError:" >> $1
+	echo "		print(\"File ", inputFile, "does not exist!\")" >> $1
+	echo "" >> $1
+	echo "    for line in f:" >> $1
+	echo "        line = line.strip()" >> $1
+	echo "        fields = line.split( \"\t\" )" >> $1
+	echo "    f.close()" >> $1
+	echo "	return" >> $1
+	echo "" >> $1
+	echo "def main():" >> $1
+	echo "    #open input file" >> $1
+	echo "	args = getArguments()" >> $1
+	echo "	input = args['input']" >> $1
+	echo "	readFile( input )" >> $1
+	echo "" >> $1
+# trigger
+	echo "sys.exit( main() )" >> $1
+fi
+exit
