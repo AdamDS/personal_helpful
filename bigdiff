@@ -1,0 +1,49 @@
+#!/usr/bin/perl
+#13 May 2015 - Adam D Scott - 
+
+use strict;
+use warnings;
+
+use IO::File;
+use FileHandle;
+
+my $usage = 'perl bigdiff <input1> <input2> 
+';
+
+die $usage , unless @ARGV == 2;
+my ( $input1 , $input2 ) = @ARGV;
+
+my $in2not1 = &check( $input1 , $input2 , "in2!1" );
+my $in1not2 = &check( $input2 , $input1 , "in1!2" );
+
+print $in1not2." lines in ".$input1." not in ".$input2."\n";
+print $in2not1." lines in ".$input2." not in ".$input1."\n";
+
+sub check {
+	my ( $input1 , $input2 , $mark ) = @_;
+
+	my $IN1 = FileHandle->new( "$input1" , "r" );
+	unless( defined $IN1 ) { die "ADSERROR: Could not open/read $input1\n"; }
+
+	my $IN2 = FileHandle->new( "$input2" , "r" );
+	unless( defined $IN2 ) { die "ADSERROR: Could not open/read $input2\n"; }
+
+	my %l1;
+	while ( my $line = <$IN1> ) {
+		chomp( $line );
+		$l1{$line} = 1;
+	}
+	$IN1->close();
+
+	my $miss = 0;
+	while ( my $line = <$IN2> ) {
+		chomp( $line );
+		if ( not exists $l1{$line} ) {
+			#print $mark." ".$line."\n";
+			$miss++;
+		}
+	}
+	$IN2->close();
+
+	return $miss;
+}

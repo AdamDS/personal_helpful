@@ -1,0 +1,74 @@
+#!/usr/bin/perl
+#08 June 2015 - Adam D Scott - 
+
+use strict;
+use warnings;
+
+use IO::File;
+use FileHandle;
+
+my $usage = 'grepmulti <input1> "columns" <input2> "columns"
+columns can be of the form 1,4..6-10 where search fields are 1,4,5,6,7,8,9,10
+NOTE: works for tsv flat files only
+';
+
+die $usage , unless @ARGV == 4;
+my ( $input1 , $cols1 , $input2 , $cols2 ) = @ARGV;
+
+my $IN1 = FileHandle->new( "$input1" , "r" );
+if ( not defined $IN1 ) { die "ADSERROR: Could not open/read $input1\n"; }
+
+if ( not -e $input2 ) { die "ADSERROR: $input2 DNE\n"; }
+
+$cols1 =~ s/[-,:]/\.\./g;
+my %search;
+my $maxcol1 = (split( /\.\.|,/ , $cols1 ))[-1];
+while ( my $line = <$IN1> ) {
+	chomp( $line );
+	my @line = split( /\t/ , $line );
+	if ( scalar @line < $maxcol1 ) { warn "$input1 line longer than column input\n"; next; }
+	my $fields = join( "\t" , $line[$cols1] );
+	$search{$fields} = 0;
+}
+$IN1->close();
+
+my $IN2 = FileHandle->new( "$input2" , "r" );
+if ( not defined $IN2 ) { die "ADSERROR: Could not open/read $input2\n"; }
+
+$cols2 =~ s/[-,:]/\.\./g;
+my $maxcol2 = (split( /\.\.|,/ , $cols2 ))[-1];
+while ( my $line = <$IN2> ) {
+	chomp( $line );
+	my @line = split( /\t/ , $line );
+	if ( scalar @line < $maxcol2 ) { warn "$input2 line longer than column input\n"; next; }
+	my $fields = join( "\t" , $line[$cols2] );
+	if ( exists $search{$fields} ) {
+		print $line."\n";
+	}
+}
+$IN2->close();
+
+###########
+#my @cols1 = &getcollist( $cols1 );
+#my @cols2 = &getcollist( $cols2 );
+
+#sub getcollist {
+#	my $cols = @_;
+#	my @cols;
+#	my @parts =~ split( /[\.\.|-]/ , $cols );
+#	my ( @starts , @ends );
+#	my $nparts = scalar @parts;
+#	foreach $part ( @parts ) {
+#		my @pieces = split( /,/ , $part );
+#		if ( $part != $parts[-1] ) {
+#			push @starts , $pieces[-1];
+#		}
+#		if ( $part != $parts[0] ) {
+#			push @ends , $pieces[0];
+#		}
+#	}
+#	for( my $i = 0; $i < scalar @starts , $i++ ) {
+#		push @cols , $starts[$i]..$ends[$i];
+#	}
+#	return @cols;
+#}

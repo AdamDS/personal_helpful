@@ -1,0 +1,7 @@
+#!/bin/bash
+if [ $# -gt 0 ]; then
+	echo "Getting $1"
+	perl -e 'use LWP::Simple; $page=get($1); print $page;'
+else
+	echo "Usage: getWebPage <website>"
+fi

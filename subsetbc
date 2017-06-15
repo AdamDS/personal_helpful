@@ -1,0 +1,54 @@
+#!/usr/bin/perl
+#04 August 2015 - Adam D Scott - 
+
+use strict;
+use warnings;
+
+use IO::File;
+use FileHandle;
+
+my $usage = 'perl subsetbc <original> #subscolumn# (<only these>)
+';
+
+die $usage , unless @ARGV >= 2;
+my ( $original , $subscolumn , $onlythese ) = @ARGV;
+
+my $IN1 = FileHandle->new( "$original" , "r" );
+if ( not defined $IN1 ) { die "ADSERROR: Could not open/read $original\n"; }
+
+my $IN2;
+my %these;
+if ( defined $onlythese ) {
+	$IN2 = FileHandle->new( "$onlythese" , "r" );
+	if ( not defined $IN2 ) { die "ADSERROR: Could not open/read $onlythese\n"; }
+	map {
+		chomp;
+		$these{$_} = 1;
+	} $IN2->getlines();
+	$IN2->close();
+}
+
+my %subsets;
+while ( my $line = <$IN1> ) {
+	chomp( $line );
+	my @line = split( "\t" , $line );
+	if ( defined $onlythese ) {
+		if ( exists $these{$line[$subscolumn-1]} ) {
+			$subsets{$line[$subscolumn-1]}{$line} = 1;
+		}
+	} else {
+		$subsets{$line[$subscolumn-1]}{$line} = 1;
+	}
+}
+$IN1->close();
+
+foreach my $key ( keys %subsets ) {
+	my $output = $key.".".$original;
+	my $OUT = FileHandle->new( $output , "w" );
+	if ( not defined $OUT ) { die "ADSERROR: Could not open/read $output\n"; }
+	#print $key."\n";
+	foreach my $line ( keys %{$subsets{$key}} ) {
+		$OUT->print( $line."\n" );
+	}
+	#print "\n"."\n";
+}

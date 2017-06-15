@@ -1,0 +1,19 @@
+#!/bin/bash
+
+if [ $# -gt 0 ]; then
+	scale=2
+	if [ $4 ]; then
+		scale=$4
+	fi
+	if [ $2 == "+" ]; then
+		echo "$1+$3" | bc
+	elif [ $2 == "-" ]; then
+		echo "$1-$3" | bc
+	elif [ $2 == "x" ]; then
+		echo "$1*$3" | bc
+	elif [ $2 == "/" ]; then
+		echo "scale=$scale; $1/$3" | bc
+	fi
+else
+	echo "Usage: math [+ = add, - = subtract, x = multiply, / = divide] #val1# #val2# (#precision if /#)"
+fi
