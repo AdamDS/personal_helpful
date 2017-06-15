@@ -1,0 +1,28 @@
+#!/bin/bash
+
+sub="subset.temp.tsv"
+if [ $# -lt 4 ]; then
+	echo ""
+	echo -n "grepbcsub searches a tab-delimited file in a specific column for term(s), "
+	echo -n "and creates an output file with the same header as the file in which "
+	echo "you search"
+	echo ""
+	echo "grepbcsub <query> <search> #column to search# #match type# [<output>]"
+	echo "  query  - can be a single term or a file containing a list of terms"
+	echo "  search - a tab-delimited file within which to search"
+	echo "  column - column within which to search of the search file"
+	echo "  match  - can be 0, 1, or 2, where "
+	echo "             0 is mismatch"
+	echo "             1 is partial match"
+	echo "             2 is exact match"
+	echo "  output - output file, default name is ${sub}"
+	exit
+fi
+
+if [ $# -eq 5 ]; then
+	sub="$5"
+fi
+
+head -n1 $2 > ${sub}
+
+grepbc $1 $2 $3 $4 >> ${sub}
