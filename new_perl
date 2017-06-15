@@ -7,7 +7,7 @@ usage="new_perl <new perl script> #number of inputs#"
 #author of perl script
 name="Adam D Scott"
 
-if [ $# -gt 0 ]; then
+if [ $# -gt 1 ]; then
 #"shebang" for perl
 	file=$1
 	echo "#!/usr/bin/perl" > $file
