@@ -1,13 +1,11 @@
 #!/bin/bash
-#a bash script to create a template python script
-#20170615 Adam D Scott
+#a bash script to create a template perl script
+#20151004 Kuan Huang
 
-usage="new_py <new python script> #number of inputs#"
+usage="new_python <new python script> #number of inputs#"
 
 #author of perl script
-name="Adam D Scott"
-
-nArgs=`math $2 x 2`
+name=`finger $USER | grep Name | cut -f 3 -d':' | sed s'/ //'`
 
 if [ $# -gt 0 ]; then
 #"shebang" for perl
@@ -18,64 +16,46 @@ if [ $# -gt 0 ]; then
 	echo -n "$timestamp" >> $1
 	echo " - $name - " >> $1
 	echo "" >> $1
+# file description
+	#echo "\"\"\"" 
+	#echo "\"\"\""
+#package use
 	echo "import sys" >> $1
-	echo "import getopt" >> $1
+	echo "import argparse" >> $1
+	# echo "import Bio" >> $1" # biopython if needed
 	echo "" >> $1
-	#package use
+#perl script usage
+	echo "INPUT = \"input\"" >> $1
+	echo "" >> $1
 	echo "def usage():" >> $1
-	echo -e "	print \"\"\"" >> $1
-	echo "	$1 : why do I exist?" >> $1
+	echo "	helpText = \"USAGE: $1 [-h] --\" + INPUT + \" <input file>\\n\"" >> $1
+	echo "	helpText += \"\\t-h	this message\\n\"" >> $1
+	echo "	helpText += \"\\t--\" + INPUT + \"	input file\\n\"" >> $1
+	echo "	return helpText" >> $1
 	echo "" >> $1
-	echo "	USAGE: $1 [-h] <filename>" >> $1
-	echo -e "		-h    print this message" >> $1
-	echo -e "		<filename>    input file" >> $1
-	echo -e "	\"\"\"" >> $1
-	echo "" >> $1
-	# get arguments
-	echo "#use getopt to get inputs" >> $1
+# get arguments
 	echo "def getArguments():" >> $1
-	echo "	if len(args) < ${nArgs}:" >> $1
-	echo "		usage();" >> $1
-	echo "		sys.exit(\"input argument(s) missing\")" >> $1
+	echo "	filename = None" >> $1
+	echo "	parser = argparse.ArgumentParser( description = usage() )" >> $1
+	echo "	parser.add_argument( \"--\" + INPUT , \"-i\" )" >> $1
+	echo "	return vars( parser.parse_args() )" >> $1
 	echo "" >> $1
-	#assume first input is a file to read
-	echo "	input = None" >> $1
-	echo "" >> $1
+	echo "def readFile( inFile ):" >> $1
+	echo "	#open input file" >> $1
 	echo "	try:" >> $1
-	echo -e "		opts, args = getopt.getopt(sys.argv[1:], 'i:h') #:after option meaning required arguments" >> $1
-	echo "	except getopt.GetoptError:" >> $1
-	echo -e "		print \"$1 <inputFile>\"" >> $1
-	#echo "optDic = {} # dictionary to store input options" >> $1
-	echo "" >> $1
-	echo "	for opt, arg in opts: #store the input options" >> $1
-	#echo -e "\toptDic[opt] = arg " >> $1
-	echo "		if opt == '-h': # h means user needs help" >> $1
-	echo "			usage();" >> $1
-	echo "			sys.exit()" >> $1
-	echo "		if opt == '-i':" >> $1
-	echo "			input = arg" >> $1
-	echo "" >> $1
-	echo "	return { 'input' : input }" >> $1
-	echo "" >> $1
-	echo "def readFile( inputFile ):" >> $1
-	echo "	try:" >> $1
-	echo "		f = open( inputFile , \"r\" )" >> $1
-	echo "	except IOError:" >> $1
-	echo "		print(\"File ", inputFile, "does not exist!\")" >> $1
-	echo "" >> $1
-	echo "    for line in f:" >> $1
-	echo "        line = line.strip()" >> $1
-	echo "        fields = line.split( \"\t\" )" >> $1
-	echo "    f.close()" >> $1
-	echo "	return" >> $1
+	echo "		with open( inFile , \"r\" ) as f:" >> $1
+	echo "			for line in f:" >> $1
+	echo "				line = line.strip()" >> $1
+	echo "				fields = line.split( \"\\t\" )" >> $1
+	echo "	except:" >> $1
+	echo "		print( \"ERROR: Bad input file\\n\" )" >> $1
+	echo "		print( usage() )" >> $1
+	echo "		sys.exit()" >> $1
 	echo "" >> $1
 	echo "def main():" >> $1
-	echo "    #open input file" >> $1
-	echo "	args = getArguments()" >> $1
-	echo "	input = args['input']" >> $1
-	echo "	readFile( input )" >> $1
+	echo "	data = getArguments()" >> $1
+	echo "	readFile( data[INPUT] )" >> $1
 	echo "" >> $1
-# trigger
 	echo "sys.exit( main() )" >> $1
 fi
 exit
